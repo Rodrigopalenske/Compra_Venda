@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="index :: head">
+  <meta charset="UTF-8">
+  <title>Compra e Venda</title>
+</head>
+<body>
+<div class="container ">
+  <div th:include="index :: menu"></div>
+  <div class="pt-3">
+    <!-- Form venda -->
+    <form>
+      <div class="mb-3">
+        <input name="id" th:value="${venda?.id}" type="text" hidden="true">
+
+        <label for="clienteVenda" class="form-label">Nome Cliente</label>
+        <input id="clienteVenda" th:value="${venda?.cliente}" name="cliente" type="text" class="form-control" required>
+
+        <label for="valorTotalVenda" class="form-label">Valor Total</label>
+        <input id="valorTotalVenda" th:value="${venda?.valorTotal != null ? venda?.valorTotal : 0.00}" name="valorTotal" type="number" class="form-control" disabled required>
+        <br>
+        <button th:formaction="@{/salvarVenda}" formmethod="post" type="submit" class="btn btn-success">Salvar</button>
+      </div>
+    </form>
+  </div>
+  <!-- Info itens vendas -->
+  <div class="pt-4" th:if="${venda != null}">
+    <!-- formulário item venda -->
+    <a type="button" class="btn btn-primary" th:href="@{/itemVenda/{id}(id=${venda.id})}">Adicionar Item de Vendas</a>
+
+    <!-- Tabela item venda -->
+    <table class="table">
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Descrição</th>
+        <th scope="col">Valor</th>
+        <th scope="col">Ações</th>
+      </tr>
+      <tr th:each="item : ${itens}">
+        <td th:text="${item.id}">0</td>
+        <td th:text="${item.descricao}">0</td>
+        <td th:text="${item.valor}">0</td>
+        <td>
+          <a th:href="@{'/alterarItemVenda/' + ${item.id}}" type="button" class="btn btn-warning">Alterar</a>
+          <a th:href="@{'/deletarItemVenda/' + ${item.id}}" type="button" class="btn btn-danger">Deletar</a>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+</body>
+</html>

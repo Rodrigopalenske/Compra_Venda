@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="index :: head">
+    <meta charset="UTF-8">
+</head>
+<body class="bg-light d-flex justify-content-center align-items-center" style="height: 100vh;">
+
+<div class="card shadow-sm" style="max-width: 500px; width: 100%;">
+
+    <div th:class="'card-header text-white text-center ' +
+                  (${tipo} == 'sucesso' ? 'bg-success' : 'bg-danger')">
+        <h4 class="mb-0" th:text="${tipo == 'sucesso' ? 'Sucesso' : 'Erro'}"></h4>
+    </div>
+
+    <div class="card-body text-center">
+        <p class="text-secondary" th:text="${mensagem}">Mensagem genérica</p>
+        <button class="btn btn-outline-primary mt-3 px-4" onclick="history.back()">Voltar</button>
+    </div>
+</div>
+
+</body>
+</html>

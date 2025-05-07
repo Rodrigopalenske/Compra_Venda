@@ -1,0 +1,16 @@
+.botao {
+    text-decoration: none;
+    color: black;
+    padding: 2%;
+    border-radius: 35%;
+    font-size: 2vh;
+}
+
+.botaoLink {
+    background-color: antiquewhite;
+}
+
+.botaoConfirmar {
+    background-color: antiquewhite;
+
+}

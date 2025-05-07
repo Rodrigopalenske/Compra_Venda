@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="index :: head">
+    <meta charset="UTF-8">
+    <title>Compra e Venda</title>
+</head>
+<body>
+<div class="container ">
+    <div th:include="index :: menu"></div>
+    <div class="pt-3">
+        <form>
+            <div class="mb-3">
+                <input name="id" th:value="${itemVenda?.id}" type="text" hidden="false">
+
+                <input name="vendaId" th:value="${vendaId}" type="text" hidden="false">
+
+                <label for="descricaoVenda" class="form-label">Descrição</label>
+                <input id="descricaoVenda" th:value="${itemVenda?.descricao}" name="descricao" type="text" class="form-control" required>
+
+                <label for="valorVenda" class="form-label">Valor</label>
+                <input id="valorVenda" th:value="${itemVenda?.valor}" name="valor" type="number" step="0.01" min="0.01" class="form-control" required>
+                <br>
+                <button th:formaction="@{/salvarItemVenda}" formmethod="post" type="submit" class="btn btn-success">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
