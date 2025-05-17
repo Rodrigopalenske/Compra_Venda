@@ -17,7 +17,7 @@
         <input id="clienteVenda" th:value="${venda?.cliente}" name="cliente" type="text" class="form-control" required>
 
         <label for="valorTotalVenda" class="form-label">Valor Total</label>
-        <input id="valorTotalVenda" th:value="${venda?.valorTotal != null ? venda?.valorTotal : 0.00}" name="valorTotal" type="number" class="form-control" disabled required>
+        <input id="valorTotalVenda" th:value="${venda?.valorTotal != null ? venda?.valorTotal : 0.0}" name="valorTotal" type="number" class="form-control" disabled required>
         <br>
         <button th:formaction="@{/salvarVenda}" formmethod="post" type="submit" class="btn btn-success">Salvar</button>
       </div>

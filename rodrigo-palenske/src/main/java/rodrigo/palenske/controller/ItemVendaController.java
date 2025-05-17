@@ -15,9 +15,10 @@ import rodrigo.palenske.service.VendaService;
 @Controller
 public class ItemVendaController {
 
+
     @Autowired
     private ItemVendaService service;
-    
+
     @Autowired
     private VendaService vendaService;
 
@@ -25,9 +26,15 @@ public class ItemVendaController {
 
     @GetMapping("itemVenda/{vendaId}")
     public String abrirFormulario(@PathVariable Long vendaId, Model model){
-        model.addAttribute("titulo", "Novo Item Venda");
-        model.addAttribute("vendaId", vendaId);
-        return "itemVenda/formulario";
+        try {
+            model.addAttribute("titulo", "Novo Item Venda");
+            model.addAttribute("vendaId", vendaId);
+            return "itemVenda/formulario";
+        } catch (Exception e) {
+            model.addAttribute("mensagem", "Venda não encontrada");
+            model.addAttribute("tipo", "erro");
+            return "utility/mensagem";
+        }
     }
 
     @GetMapping("/itensVendas")
@@ -40,25 +47,43 @@ public class ItemVendaController {
 
     @PostMapping("/salvarItemVenda")
     public String salvar(@RequestParam Long vendaId, ItemVenda itemVenda, Model model){
-        Venda venda = vendaService.buscarPorId(vendaId);
-        itemVenda.setVenda(venda);
-        service.salvar(itemVenda);
-        return "redirect:/alterarVenda/" + vendaId.toString();
+        try {
+            Venda venda = vendaService.buscarPorId(vendaId);
+            itemVenda.setVenda(venda);
+            service.salvar(itemVenda);
+            return "redirect:/alterarVenda/" + vendaId.toString();
+        } catch (Exception e) {
+            model.addAttribute("mensagem", "Não foi possível salvar esse item");
+            model.addAttribute("tipo", "erro");
+            return "utility/mensagem";
+        }
     }
 
     @GetMapping("/alterarItemVenda/{id}")
     public String alterar(@PathVariable Long id, Model model) {
-        var itemVenda = service.buscarPorId(id);
-        model.addAttribute("titulo", "Editar Item Venda");
-        model.addAttribute("itemVenda", itemVenda);
-        model.addAttribute("vendaId", itemVenda.getVenda().getId());
-        return "itemVenda/formulario";
+        try {
+            var itemVenda = service.buscarPorId(id);
+            model.addAttribute("titulo", "Editar Item Venda");
+            model.addAttribute("itemVenda", itemVenda);
+            model.addAttribute("vendaId", itemVenda.getVenda().getId());
+            return "itemVenda/formulario";
+        } catch (Exception e) {
+            model.addAttribute("mensagem", "Item não encontrado");
+            model.addAttribute("tipo", "erro");
+            return "utility/mensagem";
+        }
     }
     @GetMapping("/deletarItemVenda/{id}")
     public String deletar(@PathVariable Long id, Model model) {
-        var vendaId = service.buscarPorId(id).getVenda().getId();
-        service.deletarPorId(id);
-        return "redirect:/alterarVenda/" + vendaId.toString();
+        try {
+            var vendaId = service.buscarPorId(id).getVenda().getId();
+            service.deletarPorId(id);
+            return "redirect:/alterarVenda/" + vendaId.toString();
+        } catch (Exception e) {
+            model.addAttribute("mensagem", "Não foi possível deletar esse item");
+            model.addAttribute("tipo", "erro");
+            return "utility/mensagem";
+        }
 
     }
 }

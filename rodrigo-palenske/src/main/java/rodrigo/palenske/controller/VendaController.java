@@ -17,6 +17,8 @@ import java.util.List;
 @Controller
 public class    VendaController {
 
+    
+    
     @Autowired
     private VendaService service;
 
@@ -38,17 +40,29 @@ public class    VendaController {
 
     @PostMapping("/salvarVenda")
     public String salvar(Venda venda, Model model){
-        service.salvar(venda);
-        return "redirect:/alterarVenda/"+venda.getId().toString();
+        try {
+            service.salvar(venda);
+            return "redirect:/alterarVenda/"+venda.getId().toString();
+        } catch (Exception e) {
+            model.addAttribute("mensagem", "Não foi possível salvar essa venda");
+            model.addAttribute("tipo", "erro");
+            return "utility/mensagem";
+        }
     }
 
     @GetMapping("/alterarVenda/{id}")
     public String alterar(@PathVariable Long id, Model model) {
-        List<ItemVenda> itens = service.buscarPorId(id).getItens();
-        model.addAttribute("titulo", "Editar Venda");
-        model.addAttribute("venda", service.buscarPorId(id));
-        model.addAttribute("itens", itens);
-        return "venda/formulario";
+        try {
+            List<ItemVenda> itens = service.buscarPorId(id).getItens();
+            model.addAttribute("titulo", "Editar Venda");
+            model.addAttribute("venda", service.buscarPorId(id));
+            model.addAttribute("itens", itens);
+            return "venda/formulario";
+        } catch (Exception e) {
+            model.addAttribute("mensagem", "Venda não encontrada");
+            model.addAttribute("tipo", "erro");
+            return "utility/mensagem";
+        }
     }
 
     @GetMapping("/deletarVenda/{id}")
@@ -57,7 +71,7 @@ public class    VendaController {
             service.deletarPorId(id);
             return "redirect:/vendas";
         } catch (Exception e) {
-            model.addAttribute("mensagem", "Não é possível excluir uma venda que possui itens");
+            model.addAttribute("mensagem", "Não foi possível deletar essa venda");
             model.addAttribute("tipo", "erro");
             return "utility/mensagem";
         }

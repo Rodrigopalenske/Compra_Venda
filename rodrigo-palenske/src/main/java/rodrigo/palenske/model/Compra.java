@@ -21,6 +21,6 @@ public class Compra {
     private String cliente;
     private Float valorTotal;
 
-    @OneToMany(mappedBy = "compra")
+    @OneToMany(mappedBy = "compra", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemCompra> itens;
 }

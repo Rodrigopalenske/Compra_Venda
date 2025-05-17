@@ -1,5 +1,6 @@
 package rodrigo.palenske.controller;
 
+import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Controller
 public class CompraController {
+
 
     @Autowired
     private CompraService service;
@@ -39,17 +41,29 @@ public class CompraController {
 
     @PostMapping("salvarCompra")
     public String salvar(Compra compra, Model model){
-        service.salvar(compra);
-        return "redirect:/alterarCompra/"+compra.getId().toString();
+        try {
+            service.salvar(compra);
+            return "redirect:/alterarCompra/"+compra.getId().toString();
+        } catch (Exception e) {
+            model.addAttribute("mensagem", "Não foi possível salvar essa compra");
+            model.addAttribute("tipo", "erro");
+            return "utility/mensagem";
+        }
     }
 
     @GetMapping("/alterarCompra/{id}")
     public String alterar(@PathVariable Long id, Model model) {
-        List<ItemCompra> itens = service.buscarPorId(id).getItens();
-        model.addAttribute("titulo", "Editar Compra");
-        model.addAttribute("compra", service.buscarPorId(id));
-        model.addAttribute("itens", itens);
-        return "compra/formulario";
+        try {
+            List<ItemCompra> itens = service.buscarPorId(id).getItens();
+            model.addAttribute("titulo", "Editar Compra");
+            model.addAttribute("compra", service.buscarPorId(id));
+            model.addAttribute("itens", itens);
+            return "compra/formulario";
+        } catch (Exception e) {
+            model.addAttribute("mensagem", "Compra não encontrada");
+            model.addAttribute("tipo", "erro");
+            return "utility/mensagem";
+        }
     }
 
     @GetMapping("/deletarCompra/{id}")
@@ -58,7 +72,7 @@ public class CompraController {
             service.deletarPorId(id);
             return "redirect:/compras";
         } catch (Exception e) {
-            model.addAttribute("mensagem", "Não é possível excluir uma compra que possui itens");
+            model.addAttribute("mensagem", "Não foi possível deletar essa compra");
             model.addAttribute("tipo", "erro");
             return "utility/mensagem";
         }

@@ -1,7 +1,9 @@
 package rodrigo.palenske.service;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import rodrigo.palenske.model.Compra;
 import rodrigo.palenske.model.ItemCompra;
 import rodrigo.palenske.repository.CompraRepository;
 import rodrigo.palenske.repository.ItemCompraRepository;
@@ -17,21 +19,21 @@ public class ItemCompraService {
     @Autowired
     private CompraRepository compraRepository;
 
+    @Autowired
+    private CompraService compraService;
+
+    @Transactional
     public void salvar(ItemCompra itemCompra) {
         if (itemCompra.getDescricao().isEmpty() || itemCompra.getDescricao().isBlank()) return;
         if (itemCompra.getValor().isInfinite() || itemCompra.getValor().isNaN()) return;
         if (itemCompra.getCompra().getId() == null) return;
+        Compra compra = itemCompra.getCompra();
+        List<ItemCompra> itensCompra = compra.getItens();
+        itensCompra.add(itemCompra);
 
         repository.save(itemCompra);
-
-        var compra = itemCompra.getCompra();
-        var itensCompra = compra.getItens();
-        float valorTotalCompra = 0.0F;
-
-        for(int i = 0; i < itensCompra.size(); i++) {
-            valorTotalCompra += itensCompra.get(i).getValor();
-        }
-        compra.setValorTotal(valorTotalCompra);
+        compra.setItens(itensCompra);
+        compra = compraService.calcularValorTotal(compra);
         compraRepository.save(compra);
     }
 
@@ -42,21 +44,17 @@ public class ItemCompraService {
     public ItemCompra buscarPorId(Long id) {
         return repository.findById(id).get();
     }
-
+    @Transactional
     public void deletarPorId(Long id) {
         var itemCompra = buscarPorId(id);
         if (itemCompra.getId() == null) return;
-        var compra = itemCompra.getCompra();
+        Compra compra = itemCompra.getCompra();
+        List<ItemCompra> itensCompra = compra.getItens();
+        itensCompra.remove(itemCompra);
 
         repository.deleteById(id);
-
-        var itensCompra = compra.getItens();
-        float valorTotalCompra = 0.0F;
-
-        for(int i = 0; i < itensCompra.size(); i++) {
-            valorTotalCompra += itensCompra.get(i).getValor();
-        }
-        compra.setValorTotal(valorTotalCompra);
+        compra.setItens(itensCompra);
+        compra = compraService.calcularValorTotal(compra);
         compraRepository.save(compra);
     }
 
